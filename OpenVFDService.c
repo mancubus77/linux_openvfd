@@ -8,6 +8,9 @@
 #include <pthread.h>
 #include <stdint.h>
 #include <signal.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/stat.h>
 #include "driver/openvfd_drv.h"
 
 #define UNUSED(x)	(void*)(x)
