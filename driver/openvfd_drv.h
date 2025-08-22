@@ -54,6 +54,9 @@
 
 #ifdef MODULE
 
+/* Forward declarations */
+struct platform_device;
+
 #define MOD_NAME_CLK       "openvfd_gpio_clk"
 #define MOD_NAME_DAT       "openvfd_gpio_dat"
 #define MOD_NAME_STB       "openvfd_gpio_stb"
@@ -141,6 +144,11 @@ struct vfd_dev {
 struct vfd_platform_data {
 	struct vfd_dev *dev;
 };
+
+/* Function prototypes */
+int evaluate_pin(const char *name, const unsigned int *vfd_arg, struct vfd_pin *pin, unsigned char enable_skip_evaluation);
+void get_pin_from_dt(const char *name, const struct platform_device *pdev, struct vfd_pin *pin);
+int request_pin(const char *name, struct vfd_pin *pin, unsigned char enable_skip);
 
 #endif
 

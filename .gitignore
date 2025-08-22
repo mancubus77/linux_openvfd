@@ -1,0 +1,23 @@
+# Build artifacts
+*.o
+*.ko
+*.mod
+*.mod.c
+*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+.module-common.o
+
+# Kernel module build files
+driver/.*.cmd
+driver/*.o
+driver/*.ko
+driver/*.mod
+driver/*.mod.c
+driver/Module.symvers
+driver/modules.order
+driver/controllers/*.o
+driver/controllers/.*.cmd
+driver/protocols/*.o
+driver/protocols/.*.cmd

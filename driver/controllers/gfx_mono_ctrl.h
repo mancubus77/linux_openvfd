@@ -55,4 +55,6 @@ struct specific_gfx_mono_ctrl
 
 struct controller_interface *init_gfx_mono_ctrl(struct vfd_dev *_dev, const struct specific_gfx_mono_ctrl *specific_gfx_mono_ctrl);
 
+void transpose_buffer(unsigned char *buffer, const struct rect *rect);
+
 #endif

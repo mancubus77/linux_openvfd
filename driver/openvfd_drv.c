@@ -40,7 +40,7 @@
 #ifdef CONFIG_HAS_EARLYSUSPEND
 #include <linux/earlysuspend.h>
 static struct early_suspend openvfd_early_suspend;
-#elif CONFIG_AMLOGIC_LEGACY_EARLY_SUSPEND
+#elif defined(CONFIG_AMLOGIC_LEGACY_EARLY_SUSPEND)
 #include <linux/amlogic/pm.h>
 static struct early_suspend openvfd_early_suspend;
 #endif
@@ -393,10 +393,11 @@ static int register_openvfd_driver(void)
 {
 	int ret = 0;
 	ret = misc_register(&openvfd_device);
-	if (ret)
+	if (ret) {
 		pr_dbg("%s: failed to add openvfd module\n", __func__);
-	else
+	} else {
 		pr_dbg("%s: Succeeded to add openvfd module \n", __func__);
+	}
 	return ret;
 }
 
@@ -609,7 +610,7 @@ static void print_param_debug(const char *label, int argc, unsigned int param[])
 	pr_dbg2("%s\n", buffer);
 }
 
-static int is_right_chip(struct gpio_chip *chip, void *data)
+static int is_right_chip(struct gpio_chip *chip, const void *data)
 {
 	pr_dbg("is_right_chip %s | %s | %d\n", chip->label, (char*)data, strcmp(data, chip->label));
 	if (strcmp(data, chip->label) == 0)
@@ -619,15 +620,15 @@ static int is_right_chip(struct gpio_chip *chip, void *data)
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6,7,0)
 static struct gpio_chip *gpiochip_find(void *data,
-				int (*match)(struct gpio_chip *gc,
-							 void *data))
+			int (*match)(struct gpio_chip *gc,
+						 const void *data))
 {
 	struct gpio_device *gdev;
 	struct gpio_chip *gc = NULL;
 
 	gdev = gpio_device_find(data, match);
 	if (gdev) {
-		gc = gdev->chip;
+		gc = gpio_device_get_chip(gdev);
 		gpio_device_put(gdev);
 	}
 
@@ -681,7 +682,7 @@ int evaluate_pin(const char *name, const unsigned int *vfd_arg, struct vfd_pin *
 
 char gpio_chip_names[1024] = { 0 };
 
-static int enum_gpio_chips(struct gpio_chip *chip, void *data)
+static int enum_gpio_chips(struct gpio_chip *chip, const void *data)
 {
 	static unsigned char first_iteration = 1;
 	const char *sep = ", ";
@@ -970,7 +971,7 @@ static int openvfd_driver_probe(struct platform_device *pdev)
 	return state;
 }
 
-static int openvfd_driver_remove(struct platform_device *pdev)
+static void openvfd_driver_remove(struct platform_device *pdev)
 {
 	set_power(0);
 #if defined(CONFIG_HAS_EARLYSUSPEND) || defined(CONFIG_AMLOGIC_LEGACY_EARLY_SUSPEND)
@@ -997,7 +998,6 @@ static int openvfd_driver_remove(struct platform_device *pdev)
 	kfree(pdata);
 	pdata = NULL;
 #endif
-	return 0;
 }
 
 static void openvfd_driver_shutdown(struct platform_device *dev)
